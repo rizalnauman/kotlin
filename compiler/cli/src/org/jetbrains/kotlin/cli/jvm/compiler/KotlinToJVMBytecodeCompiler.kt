@@ -58,6 +58,10 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.createSessionWithDependencies
+import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.session.FirJvmModuleInfo
+import org.jetbrains.kotlin.fir.session.FirSessionFactory
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
@@ -328,7 +332,8 @@ object KotlinToJVMBytecodeCompiler {
                 languageVersionSettings,
                 sourceScope,
                 librariesScope,
-                environment::createPackagePartProvider
+                environment::createPackagePartProvider,
+                lookupTracker = environment.configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER)
             ) {
                 if (extendedAnalysisMode) {
                     registerExtendedCommonCheckers()
