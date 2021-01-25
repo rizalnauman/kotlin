@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.supertypeGenerators
+import org.jetbrains.kotlin.fir.firLookupTracker
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeParameterSupertype
@@ -284,6 +285,11 @@ private class FirSupertypeResolverVisitor(
         supertypeRefs: List<FirTypeRef>
     ): List<FirTypeRef> {
         return resolveSpecificClassLikeSupertypes(classLikeDeclaration) { transformer, scope ->
+            session.firLookupTracker?.recordLookup(
+                supertypeRefs,
+                session.firProvider.getFirClassifierContainerFile(classLikeDeclaration.symbol).source!!,
+                scope
+            )
             /*
               This list is backed by mutable list and during iterating on it we can resolve supertypes of that class via IDE light classes
               as IJ Java resolve may resolve a lot of stuff by light classes
