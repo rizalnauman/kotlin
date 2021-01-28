@@ -287,11 +287,12 @@ private class FirSupertypeResolverVisitor(
     ): List<FirTypeRef> {
         return resolveSpecificClassLikeSupertypes(classLikeDeclaration) { transformer, scope ->
             if (!classLikeDeclaration.isLocalClassOrAnonymousObject()) {
-                session.firLookupTracker?.recordLookup(
-                    supertypeRefs,
-                    session.firProvider.getFirClassifierContainerFile (classLikeDeclaration.symbol).source,
-                    scope
-                )
+                session.firLookupTracker?.let {
+                    val fileSource = session.firProvider.getFirClassifierContainerFile(classLikeDeclaration.symbol).source
+                    for (supertypeRef in supertypeRefs) {
+                        it.recordLookup(supertypeRef, fileSource, scope)
+                    }
+                }
             }
             /*
               This list is backed by mutable list and during iterating on it we can resolve supertypes of that class via IDE light classes
