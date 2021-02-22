@@ -321,6 +321,13 @@ object KotlinToJVMBytecodeCompiler {
 
             val ktFiles = module.getSourceFiles(environment, localFileSystem, chunk.size > 1, buildFile)
             if (!checkKotlinPackageUsage(environment, ktFiles)) return false
+
+            var syntaxErrors = false
+            for (ktFile in ktFiles) {
+                syntaxErrors =
+                    syntaxErrors or AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, environment.messageCollector).isHasErrors
+            }
+
             val moduleConfiguration = projectConfiguration.applyModuleProperties(module, buildFile)
 
             val sourceScope = GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
@@ -360,7 +367,7 @@ object KotlinToJVMBytecodeCompiler {
             // TODO: maybe we should not do it in presence of errors, but tests at the moment expect lookups to be reported
             session.firLookupTracker?.flushLookups()
 
-            if (firDiagnostics.any { it.severity == Severity.ERROR }) {
+            if (syntaxErrors || firDiagnostics.any { it.severity == Severity.ERROR }) {
                 return false
             }
 
