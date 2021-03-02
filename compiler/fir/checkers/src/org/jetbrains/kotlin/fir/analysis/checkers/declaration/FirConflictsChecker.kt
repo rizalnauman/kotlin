@@ -78,10 +78,10 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
             conflictingSymbol: AbstractFirBasedSymbol<*>,
             conflictingPresentation: String?,
             conflictingFile: FirFile?,
-            session: FirSession,
-            visibilityChecker: FirVisibilityChecker
+            session: FirSession
         ) {
             val conflicting = conflictingSymbol.fir as? FirDeclaration ?: return
+            if (declaration.session.moduleInfo != conflicting.session.moduleInfo) return
             val actualConflictingPresentation = conflictingPresentation ?: presenter.represent(conflicting)
             if (conflicting == declaration || actualConflictingPresentation != declarationPresentation) return
             val actualConflictingFile =
@@ -94,7 +94,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
             if (areCompatibleMainFunctions(declaration, containingFile, conflicting, actualConflictingFile)) return
             if (isExpectAndActual(declaration, conflicting)) return
             if (conflicting is FirMemberDeclaration && !(conflicting is FirSymbolOwner<*> &&
-                        visibilityChecker.isVisible(conflicting, session, containingFile, emptyList(), null))
+                        session.visibilityChecker.isVisible(conflicting, session, containingFile, emptyList(), null))
             ) {
                 return
             }
@@ -108,7 +108,6 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
             packageMemberScope: FirPackageMemberScope
         ) {
             collect(declaration)
-            val visibilityChecker = session.visibilityChecker
             var declarationName: Name? = null
             val declarationPresentation = presenter.represent(declaration) ?: return
 
@@ -118,7 +117,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
                     if (!declarationName.isSpecial) {
                         packageMemberScope.processFunctionsByName(declarationName) {
                             collectExternalConflict(
-                                declaration, declarationPresentation, containingFile, it, null, null, session, visibilityChecker
+                                declaration, declarationPresentation, containingFile, it, null, null, session
                             )
                         }
                         packageMemberScope.processClassifiersByNameWithSubstitution(declarationName) { symbol, _ ->
@@ -127,7 +126,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
                                 collectExternalConflict(
                                     declaration, declarationPresentation, containingFile,
                                     constructor.symbol, presenter.represent(constructor, classWithSameName), null,
-                                    session, visibilityChecker
+                                    session
                                 )
                             }
                         }
@@ -138,7 +137,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
                     if (!declarationName.isSpecial) {
                         packageMemberScope.processPropertiesByName(declarationName) {
                             collectExternalConflict(
-                                declaration, declarationPresentation, containingFile, it, null, null, session, visibilityChecker
+                                declaration, declarationPresentation, containingFile, it, null, null, session
                             )
                         }
                     }
@@ -149,14 +148,14 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
                     if (!declarationName.isSpecial) {
                         packageMemberScope.processClassifiersByNameWithSubstitution(declarationName) { symbol, _ ->
                             collectExternalConflict(
-                                declaration, declarationPresentation, containingFile, symbol, null, null, session, visibilityChecker
+                                declaration, declarationPresentation, containingFile, symbol, null, null, session
                             )
                         }
                         declaration.onConstructors { constructor ->
                             packageMemberScope.processFunctionsByName(declarationName!!) {
                                 collectExternalConflict(
                                     constructor, presenter.represent(constructor, declaration), containingFile,
-                                    it, null, null, session, visibilityChecker
+                                    it, null, null, session
                                 )
                             }
                         }
@@ -170,8 +169,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
                                     it.classifier,
                                     null,
                                     it.file,
-                                    session,
-                                    visibilityChecker
+                                    session
                                 )
                             }
                     }
@@ -181,7 +179,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
                     if (!declarationName.isSpecial) {
                         packageMemberScope.processClassifiersByNameWithSubstitution(declarationName) { symbol, _ ->
                             collectExternalConflict(
-                                declaration, declarationPresentation, containingFile, symbol, null, null, session, visibilityChecker
+                                declaration, declarationPresentation, containingFile, symbol, null, null, session
                             )
                         }
                         session.nameConflictsTracker?.let { it as? FirNameConflictsTracker }
@@ -193,8 +191,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
                                     it.classifier,
                                     null,
                                     it.file,
-                                    session,
-                                    visibilityChecker
+                                    session
                                 )
                             }
                     }
