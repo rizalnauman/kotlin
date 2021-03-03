@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.createSessionWithDependencies
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.firLookupTracker
+import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.FirJvmModuleInfo
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
