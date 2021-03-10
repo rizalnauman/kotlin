@@ -6,9 +6,13 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.file.structure
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.parentOfType
+import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
@@ -41,13 +45,21 @@ internal class FileStructure(
         return getStructureElementForDeclaration(container)
     }
 
+    private fun collectDesignation(declaration: KtDeclaration): List<FirDeclaration> {
+        return declaration.parentsOfType<KtDeclaration>(withSelf = false).mapTo(mutableListOf()) {
+            getStructureElementFor(it).mappings[it] as FirDeclaration
+        }
+    }
+
     private fun getStructureElementForDeclaration(declaration: KtAnnotated): FileStructureElement {
         @Suppress("CANNOT_CHECK_FOR_ERASED")
         val structureElement = structureElements.compute(declaration) { _, structureElement ->
             when {
                 structureElement == null -> createStructureElement(declaration)
                 structureElement is ReanalyzableStructureElement<KtDeclaration> && !structureElement.isUpToDate() -> {
-                    structureElement.reanalyze(declaration as KtDeclaration, moduleFileCache, firLazyDeclarationResolver, firIdeProvider)
+                    declaration as KtDeclaration
+                    val designation = collectDesignation(declaration)
+                    structureElement.reanalyze(declaration, moduleFileCache, firLazyDeclarationResolver, firIdeProvider, designation)
                 }
                 else -> structureElement
             }

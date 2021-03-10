@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-class RawFirBuilder(
+open class RawFirBuilder(
     session: FirSession, val baseScopeProvider: FirScopeProvider, val mode: RawFirBuilderMode = RawFirBuilderMode.NORMAL
 ) : BaseFirBuilder<PsiElement>(session) {
 
@@ -61,49 +61,6 @@ class RawFirBuilder(
 
     fun buildTypeReference(reference: KtTypeReference): FirTypeRef {
         return reference.accept(Visitor(), Unit) as FirTypeRef
-    }
-
-    fun buildFunctionWithBody(function: KtNamedFunction, original: FirFunction<*>?): FirFunction<*> {
-        return buildDeclaration(function, original) as FirFunction<*>
-    }
-
-    fun buildSecondaryConstructor(secondaryConstructor: KtSecondaryConstructor, original: FirConstructor?): FirConstructor {
-        return buildDeclaration(secondaryConstructor, original) as FirConstructor
-    }
-
-    fun buildPropertyWithBody(property: KtProperty, original: FirProperty?): FirProperty {
-        require(!property.isLocal) { "Should not be used to build local properties (variables)" }
-        return buildDeclaration(property, original) as FirProperty
-    }
-
-    private fun buildDeclaration(declaration: KtDeclaration, original: FirDeclaration?): FirDeclaration {
-        assert(mode ==  RawFirBuilderMode.NORMAL) { "Building FIR declarations isn't supported in stub or lazy mode mode" }
-        setupContextForPosition(declaration,)
-        val firDeclaration = declaration.accept(Visitor(), Unit) as FirDeclaration
-        original?.let { firDeclaration.copyContainingClassAttrFrom(it) }
-        return firDeclaration
-    }
-
-    // TODO this is a (temporary) hack, instead we should properly initialize [context]
-    private fun FirDeclaration.copyContainingClassAttrFrom(from: FirDeclaration) {
-        (this as? FirCallableMemberDeclaration<*>)?.let {
-            it.containingClassAttr = (from as? FirCallableMemberDeclaration<*>)?.containingClass()
-        }
-    }
-
-    private fun setupContextForPosition(position: KtElement) {
-        val parentsUpToFile = position.parents
-        for (parent in parentsUpToFile.toList().asReversed()) {
-            when (parent) {
-                is KtFile -> {
-                    context.packageFqName = parent.packageFqName
-                }
-                is KtClassOrObject -> {
-                    context.className = context.className.child(parent.nameAsSafeName)
-                    context.localBits.add(parent.isLocal || parent.getStrictParentOfType<KtEnumEntry>() != null)
-                }
-            }
-        }
     }
 
     override fun PsiElement.toFirSourceElement(kind: FirFakeSourceElementKind?): FirPsiSourceElement<*> {
@@ -178,7 +135,7 @@ class RawFirBuilder(
             }
         }
 
-    private inner class Visitor : KtVisitor<FirElement, Unit>() {
+    protected inner class Visitor : KtVisitor<FirElement, Unit>() {
         private inline fun <reified R : FirElement> KtElement?.convertSafe(): R? =
             this?.accept(this@Visitor, Unit) as? R
 
