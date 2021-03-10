@@ -79,10 +79,7 @@ import org.jetbrains.kotlin.idea.editor.backspaceHandler.AbstractBackspaceHandle
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractQuickDocProviderTest
 import org.jetbrains.kotlin.idea.filters.AbstractKotlinExceptionFilterTest
 import org.jetbrains.kotlin.idea.fir.AbstractKtDeclarationAndFirDeclarationEqualityChecker
-import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyDeclarationResolveTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyResolveTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleLazyResolveTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleResolveTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic.AbstractDiagnosticTraversalCounterTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureAndOutOfBlockModificationTrackerConsistencyTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureTest
@@ -1060,6 +1057,12 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirLazyResolveTest> {
                 model("fir/lazyResolve", extension = "test", singleClass = true, filenameStartsLowerCase = true)
+            }
+        }
+
+        testGroup("idea/idea-frontend-fir/idea-fir-low-level-api/tests", "compiler/fir/raw-fir/psi2fir/testData") {
+            testClass<AbstractFirLazyBodiesCalculatorTest> {
+                model("rawBuilder", testMethod = "doTest")
             }
         }
 

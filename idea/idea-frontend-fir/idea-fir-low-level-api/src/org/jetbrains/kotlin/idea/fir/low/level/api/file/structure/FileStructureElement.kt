@@ -44,6 +44,7 @@ internal sealed class ReanalyzableStructureElement<KT : KtDeclaration>(firFile: 
         cache: ModuleFileCache,
         firLazyDeclarationResolver: FirLazyDeclarationResolver,
         firIdeProvider: FirIdeProvider,
+        designation: List<FirDeclaration>,
     ): ReanalyzableStructureElement<KT>
 
     fun isUpToDate(): Boolean = psi.getModificationStamp() == timestamp
@@ -94,9 +95,10 @@ internal class ReanalyzableFunctionStructureElement(
         cache: ModuleFileCache,
         firLazyDeclarationResolver: FirLazyDeclarationResolver,
         firIdeProvider: FirIdeProvider,
+        designation: List<FirDeclaration>
     ): ReanalyzableFunctionStructureElement {
         val originalFunction = firSymbol.fir as FirSimpleFunction
-        val newFunction = firIdeProvider.buildFunctionWithBody(newKtDeclaration, originalFunction) as FirSimpleFunction
+        val newFunction = firIdeProvider.buildFunctionWithBody(newKtDeclaration, originalFunction, designation) as FirSimpleFunction
 
         return FileStructureUtil.withDeclarationReplaced(firFile, cache, originalFunction, newFunction) {
             firLazyDeclarationResolver.lazyResolveDeclaration(
@@ -132,9 +134,10 @@ internal class ReanalyzablePropertyStructureElement(
         cache: ModuleFileCache,
         firLazyDeclarationResolver: FirLazyDeclarationResolver,
         firIdeProvider: FirIdeProvider,
+        designation: List<FirDeclaration>,
     ): ReanalyzablePropertyStructureElement {
         val originalProperty = firSymbol.fir
-        val newProperty = firIdeProvider.buildPropertyWithBody(newKtDeclaration, originalProperty)
+        val newProperty = firIdeProvider.buildPropertyWithBody(newKtDeclaration, originalProperty, designation)
 
         return FileStructureUtil.withDeclarationReplaced(firFile, cache, originalProperty, newProperty) {
             firLazyDeclarationResolver.lazyResolveDeclaration(

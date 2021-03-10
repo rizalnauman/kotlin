@@ -10,7 +10,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
-import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.builder.RawFirFragmentForLazyBodiesBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
@@ -95,14 +95,33 @@ internal class FirIdeProvider(
 
     // TODO move out of here
     // used only for completion
-    fun buildFunctionWithBody(ktNamedFunction: KtNamedFunction, original: FirFunction<*>): FirFunction<*> {
-        return RawFirBuilder(session, kotlinScopeProvider).buildFunctionWithBody(ktNamedFunction, original)
+    fun buildFunctionWithBody(
+        ktNamedFunction: KtNamedFunction,
+        original: FirFunction<*>,
+        designation: List<FirDeclaration>
+    ): FirFunction<*> {
+        return RawFirFragmentForLazyBodiesBuilder.build(
+            session = original.session,
+            baseScopeProvider = original.session.firIdeProvider.kotlinScopeProvider,
+            designation = designation,
+            declaration = ktNamedFunction,
+            original = original
+        ) as FirFunction<*>
     }
 
-    fun buildPropertyWithBody(ktNamedFunction: KtProperty, original: FirProperty): FirProperty {
-        return RawFirBuilder(session, kotlinScopeProvider).buildPropertyWithBody(ktNamedFunction, original)
+    fun buildPropertyWithBody(
+        ktNamedFunction: KtProperty,
+        original: FirProperty,
+        designation: List<FirDeclaration>
+    ): FirProperty {
+        return RawFirFragmentForLazyBodiesBuilder.build(
+            session = original.session,
+            baseScopeProvider = original.session.firIdeProvider.kotlinScopeProvider,
+            designation = designation,
+            declaration = ktNamedFunction,
+            original = original
+        ) as FirProperty
     }
-
 
     @FirProviderInternals
     override fun recordGeneratedClass(owner: FirAnnotatedDeclaration, klass: FirRegularClass) {

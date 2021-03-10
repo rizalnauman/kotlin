@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.builder;
+package org.jetbrains.kotlin.idea.fir.low.level.api;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
@@ -20,9 +20,9 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class RawFirBuilderLazyBodiesTestCaseGenerated extends AbstractRawFirBuilderLazyBodiesTestCase {
+public class FirLazyBodiesCalculatorTestGenerated extends AbstractFirLazyBodiesCalculatorTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doRawFirTest, this, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
     public void testAllFilesPresentInRawBuilder() throws Exception {
@@ -32,9 +32,9 @@ public class RawFirBuilderLazyBodiesTestCaseGenerated extends AbstractRawFirBuil
     @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Declarations extends AbstractRawFirBuilderLazyBodiesTestCase {
+    public static class Declarations extends AbstractFirLazyBodiesCalculatorTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doRawFirTest, this, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInDeclarations() throws Exception {
@@ -174,9 +174,9 @@ public class RawFirBuilderLazyBodiesTestCaseGenerated extends AbstractRawFirBuil
         @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Contracts extends AbstractRawFirBuilderLazyBodiesTestCase {
+        public static class Contracts extends AbstractFirLazyBodiesCalculatorTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doRawFirTest, this, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInContracts() throws Exception {
@@ -186,9 +186,9 @@ public class RawFirBuilderLazyBodiesTestCaseGenerated extends AbstractRawFirBuil
             @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/newSyntax")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class NewSyntax extends AbstractRawFirBuilderLazyBodiesTestCase {
+            public static class NewSyntax extends AbstractFirLazyBodiesCalculatorTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doRawFirTest, this, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInNewSyntax() throws Exception {
@@ -214,9 +214,9 @@ public class RawFirBuilderLazyBodiesTestCaseGenerated extends AbstractRawFirBuil
             @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/oldSyntax")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class OldSyntax extends AbstractRawFirBuilderLazyBodiesTestCase {
+            public static class OldSyntax extends AbstractFirLazyBodiesCalculatorTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doRawFirTest, this, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInOldSyntax() throws Exception {
@@ -234,9 +234,9 @@ public class RawFirBuilderLazyBodiesTestCaseGenerated extends AbstractRawFirBuil
     @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Expressions extends AbstractRawFirBuilderLazyBodiesTestCase {
+    public static class Expressions extends AbstractFirLazyBodiesCalculatorTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doRawFirTest, this, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInExpressions() throws Exception {
