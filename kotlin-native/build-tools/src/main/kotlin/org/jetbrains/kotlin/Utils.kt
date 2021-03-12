@@ -91,9 +91,9 @@ fun Project.redirectIfEnabled(url: String):String = if (cacheRedirectorEnabled) 
 } else
     url
 
-val validPropertiesNames = listOf("kotlin.native.home",
+val validPropertiesNames = listOf("konan.home",
                                   "org.jetbrains.kotlin.native.home",
-                                  "konan.home")
+                                  "kotlin.native.home")
 
 val Project.kotlinNativeDist
     get() = rootProject.currentKotlinNativeDist
@@ -105,9 +105,9 @@ val kotlinNativeHome
     get() = validPropertiesNames.mapNotNull(System::getProperty).first()
 
 val Project.useCustomDist
-    get() = hasProperty("kotlin.native.home") ||
+    get() = hasProperty("konan.home") ||
             hasProperty("org.jetbrains.kotlin.native.home") ||
-            hasProperty("konan.home")
+            hasProperty("kotlin.native.home")
 
 private val libraryRegexp = Regex("""^import\s+platform\.(\S+)\..*$""")
 fun File.dependencies() =
