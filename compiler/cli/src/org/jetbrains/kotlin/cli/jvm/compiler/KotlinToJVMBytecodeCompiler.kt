@@ -340,11 +340,13 @@ object KotlinToJVMBytecodeCompiler {
                 sourceScope,
                 librariesScope,
                 lookupTracker = environment.configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
-                {
-                    environment.createPackagePartProvider(it).let { fragment ->
-                        if (targetIds == null || incrementalComponents == null) fragment
-                        else IncrementalPackagePartProvider(fragment, targetIds.map(incrementalComponents::getIncrementalCache))
-                    }
+                getPackagePartProvider = { environment.createPackagePartProvider(it) },
+                getAdditionalModulePackagePartProvider = {
+                    if (targetIds == null || incrementalComponents == null) null
+                    else IncrementalPackagePartProvider(
+                        environment.createPackagePartProvider(it),
+                        targetIds.map(incrementalComponents::getIncrementalCache)
+                    )
                 }
             ) {
                 if (extendedAnalysisMode) {
