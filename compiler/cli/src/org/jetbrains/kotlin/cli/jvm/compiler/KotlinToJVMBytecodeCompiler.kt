@@ -58,11 +58,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.createSessionWithDependencies
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.firLookupTracker
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.session.FirJvmModuleInfo
-import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
@@ -335,10 +331,6 @@ object KotlinToJVMBytecodeCompiler {
                 .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
 
             val librariesScope = ProjectScope.getLibrariesScope(project)
-            val packagePartProvider = environment.createPackagePartProvider(librariesScope).let { fragment ->
-                if (targetIds == null || incrementalComponents == null) fragment
-                else IncrementalPackagePartProvider(fragment, targetIds.map(incrementalComponents::getIncrementalCache))
-            }
 
             val languageVersionSettings = moduleConfiguration.languageVersionSettings
             val session = createSessionWithDependencies(
@@ -347,8 +339,13 @@ object KotlinToJVMBytecodeCompiler {
                 languageVersionSettings,
                 sourceScope,
                 librariesScope,
-                packagePartProvider,
-                lookupTracker = environment.configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER)
+                lookupTracker = environment.configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
+                {
+                    environment.createPackagePartProvider(it).let { fragment ->
+                        if (targetIds == null || incrementalComponents == null) fragment
+                        else IncrementalPackagePartProvider(fragment, targetIds.map(incrementalComponents::getIncrementalCache))
+                    }
+                }
             ) {
                 if (extendedAnalysisMode) {
                     registerExtendedCommonCheckers()
