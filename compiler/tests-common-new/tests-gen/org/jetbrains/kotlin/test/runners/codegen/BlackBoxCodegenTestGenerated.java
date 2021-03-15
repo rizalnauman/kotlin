@@ -19501,6 +19501,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("extenderNestedClass.kt")
+        public void testExtenderNestedClass() throws Exception {
+            runTest("compiler/testData/codegen/box/innerNested/extenderNestedClass.kt");
+        }
+
+        @Test
         @TestMetadata("extensionFun.kt")
         public void testExtensionFun() throws Exception {
             runTest("compiler/testData/codegen/box/innerNested/extensionFun.kt");
