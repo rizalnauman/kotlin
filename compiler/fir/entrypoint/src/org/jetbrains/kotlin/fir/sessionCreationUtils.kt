@@ -94,7 +94,7 @@ private inline fun createSessionWithDependencies(
         provider,
         sourceScope,
         project,
-        additionalPackagePartProvider = getAdditionalModulePackagePartProvider(librariesScope),
+        additionalPackagePartProvider = getAdditionalModulePackagePartProvider(sourceScope),
         additionalScope = librariesScope,
         languageVersionSettings = languageVersionSettings,
         lookupTracker = lookupTracker,
