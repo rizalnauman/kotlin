@@ -41,7 +41,8 @@ abstract class FirLookupTrackerComponent : FirSessionComponent {
         }
     }
 
-    fun recordTypeResolve(typeRef: FirResolvedTypeRef, source: FirSourceElement?, fileSource: FirSourceElement?) {
+    fun recordTypeResolve(typeRef: FirTypeRef, source: FirSourceElement?, fileSource: FirSourceElement?) {
+        if (typeRef !is FirResolvedTypeRef) return // TODO: check if this is the correct behavior
         if (source == null && fileSource == null) return // TODO: investigate all cases
 
         fun recordIfValid(type: ConeKotlinType) {

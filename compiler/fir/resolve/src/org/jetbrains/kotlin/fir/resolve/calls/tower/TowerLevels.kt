@@ -140,6 +140,7 @@ class MemberScopeTowerLevel(
                 info.name, session, bodyResolveComponents,
                 includeInnerConstructors = true,
                 processor = {
+                    session.firLookupTracker?.recordTypeResolve(it.fir.returnTypeRef, info.callSite.source, info.containingFile.source)
                     // WARNING, DO NOT CAST FUNCTIONAL TYPE ITSELF
                     @Suppress("UNCHECKED_CAST")
                     consumer(it as FirFunctionSymbol<*>)
@@ -155,6 +156,7 @@ class MemberScopeTowerLevel(
         return processMembers(processor) { consumer ->
             session.firLookupTracker?.recordLookup(info, dispatchReceiverValue.type)
             this.processPropertiesByName(info.name) {
+                session.firLookupTracker?.recordTypeResolve(it.fir.returnTypeRef, info.callSite.source, info.containingFile.source)
                 // WARNING, DO NOT CAST FUNCTIONAL TYPE ITSELF
                 @Suppress("UNCHECKED_CAST")
                 consumer(it)
