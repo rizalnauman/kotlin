@@ -1131,6 +1131,10 @@ fun Project.configureJvmProject(javaHome: String, javaVersion: String) {
             } else {
                 kotlinOptions.freeCompilerArgs += "-Xjvm-default=all"
             }
+        } else {
+            kotlinOptions.freeCompilerArgs -= "-Xjvm-default=all"
+            kotlinOptions.freeCompilerArgs -= "-Xjvm-default=$jvmDefaultMode"
+            kotlinOptions.freeCompilerArgs += "-Xjvm-default=$jvmDefaultMode"
         }
     }
 
