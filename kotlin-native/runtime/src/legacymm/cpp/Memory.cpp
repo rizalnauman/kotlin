@@ -328,7 +328,7 @@ public:
   }
 
   static int toIndex(const ObjHeader* obj, int stack) {
-    if (isValidReference(obj))
+    if (!isNullOrMarker(obj))
         return toIndex(containerFor(obj), stack);
     else
         return 4 + stack * 6;
@@ -2158,7 +2158,7 @@ void setHeapRef(ObjHeader** location, const ObjHeader* object) {
 void zeroHeapRef(ObjHeader** location) {
   MEMORY_LOG("ZeroHeapRef %p\n", location)
   auto* value = *location;
-  if (isValidReference(value)) {
+  if (!isNullOrMarker(value)) {
     UPDATE_REF_EVENT(memoryState, value, nullptr, location, 0);
     *location = nullptr;
     ReleaseHeapRef(value);
@@ -2186,7 +2186,7 @@ void updateHeapRef(ObjHeader** location, const ObjHeader* object) {
       addHeapRef(object);
     }
     *const_cast<const ObjHeader**>(location) = object;
-    if (isValidReference(old)) {
+    if (!isNullOrMarker(old)) {
       releaseHeapRef<Strict>(old);
     }
   }

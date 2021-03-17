@@ -176,7 +176,7 @@ TEST_F(InitSingletonTest, InitSingletonRecursive) {
                     ObjHeader* result = InitSingleton(&location2, 0, &stackLocation2);
                     EXPECT_THAT(result, stackLocation2);
                     EXPECT_THAT(result, location2);
-                    EXPECT_THAT(result, testing::Truly(isValidReference));
+                    EXPECT_THAT(result, testing::Not(testing::Truly(isNullOrMarker)));
                 } else {
                     ObjHeader* result = InitSingleton(&location1, 0, &stackLocation1);
                     EXPECT_THAT(result, stackLocation1);
@@ -217,7 +217,7 @@ TEST_F(InitSingletonTest, InitSingletonConcurrent) {
     }
     testing::Mock::VerifyAndClearExpectations(&constructor());
 
-    EXPECT_THAT(location, testing::Truly(isValidReference));
+    EXPECT_THAT(location, testing::Not(testing::Truly(isNullOrMarker)));
     EXPECT_THAT(stackLocations, testing::Each(location));
     EXPECT_THAT(actual, testing::Each(location));
 }
