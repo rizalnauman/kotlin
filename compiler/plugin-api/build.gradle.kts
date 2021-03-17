@@ -4,6 +4,8 @@ plugins {
     id("jps-compatible")
 }
 
+jvmDefaultMode = "disable"
+
 dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))
