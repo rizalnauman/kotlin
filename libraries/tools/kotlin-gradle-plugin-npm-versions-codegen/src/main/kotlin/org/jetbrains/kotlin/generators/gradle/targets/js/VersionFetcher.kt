@@ -22,7 +22,7 @@ class VersionFetcher : AutoCloseable {
         return coroutineScope {
             npmPackages
                 .filter { it.version != null }
-                .map { HardcodedPackageInformation(it.name, it.version!!) } +
+                .map { HardcodedPackageInformation(it.displayName, it.version!!) } +
                     npmPackages
                         .filter { it.version == null }
                         .map { async { fetchPackageInformationAsync(it.name) } }
@@ -37,14 +37,17 @@ class VersionFetcher : AutoCloseable {
         }
     }
 
-    private suspend fun fetchPackageInformationAsync(packageName: String): Pair<String, String> {
+    private suspend fun fetchPackageInformationAsync(
+        packageName: String,
+        displayName: String = packageName
+    ): Pair<String, String> {
         val packagePath =
             if (packageName.startsWith("@"))
                 "@" + encodeURIComponent(packageName)
             else
                 encodeURIComponent(packageName)
 
-        return (packageName to client.get<String>("http://registry.npmjs.org/$packagePath"))
+        return (displayName to client.get<String>("http://registry.npmjs.org/$packagePath"))
     }
 
     override fun close() {
